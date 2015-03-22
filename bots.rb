@@ -36,16 +36,20 @@ class MyBot < Ebooks::Bot
     self.consumer_secret = CONSUMER_SECRET
 
     self.blacklist = ['appmeerkat']
-    self.delay_range = 1..10
+    self.delay_range = 10..30
   end
 
   def dead_response
     "|STREAM OVER| Looks like we've got ourselves a dead meerkat. Mind cleaning up the mess?"
   end
 
+  def reply_response
+    "This is an automated service by @prestonrichey. Feel free to get in contact."
+  end
+
   def on_startup
     # Run every 30 min
-    scheduler.cron '0, 30 * * * *' do
+    scheduler.cron '0, 15, 30, 45 * * * *' do
       twitter.search("'|LIVE NOW|' meerkat", result_type: 'recent').each do |tweet|
         delay do
           url = tweet.text.split(' ').last
@@ -55,6 +59,10 @@ class MyBot < Ebooks::Bot
         end
       end
     end
+  end
+
+  def on_mention(tweet)
+    reply(tweet, reply_response)
   end
 end
 
