@@ -50,7 +50,7 @@ class MyBot < Ebooks::Bot
   def on_startup
     # Run every 30 min
     scheduler.cron '0, 15, 30, 45 * * * *' do
-      twitter.search("'|LIVE NOW|' meerkat", result_type: 'recent').each do |tweet|
+      twitter.search("'|LIVE NOW|' meerkat", result_type: 'recent').take(15).each do |tweet|
         delay do
           url = tweet.text.split(' ').last
           if roadkill? url
