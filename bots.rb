@@ -12,18 +12,22 @@ OAUTH_TOKEN = ENV['EBOOKS_OAUTH_TOKEN']
 OAUTH_TOKEN_SECRET = ENV['EBOOKS_OAUTH_TOKEN_SECRET']
 
 def roadkill?(meerkat)
-  doc = Nokogiri::HTML(open(meerkat))
+  begin
+    doc = Nokogiri::HTML(open(meerkat))
 
-  stream_url = doc.xpath("//meta[@name='twitter:app:url:iphone']/@content")
-                  .to_s
-                  .split('/')
-                  .last
+    stream_url = doc.xpath("//meta[@name='twitter:app:url:iphone']/@content")
+                    .to_s
+                    .split('/')
+                    .last
 
-  api_base_url = 'http://resources.meerkatapp.co/'
+    api_base_url = 'http://resources.meerkatapp.co/'
 
-  response        = HTTParty.get(api_base_url + 'broadcasts/' + stream_url + '/summary')
-  broadcast_info  = JSON.parse(response.body)
-  broadcast_info['result']['status'] == 'ended'
+    response        = HTTParty.get(api_base_url + 'broadcasts/' + stream_url + '/summary')
+    broadcast_info  = JSON.parse(response.body)
+    broadcast_info['result']['status'] == 'ended'
+  rescue
+    false
+  end
 end
 
 class MyBot < Ebooks::Bot
@@ -32,15 +36,24 @@ class MyBot < Ebooks::Bot
     self.consumer_secret = CONSUMER_SECRET
 
     self.blacklist = ['appmeerkat']
-    self.delay_range = 1..6
+    self.delay_range = 1..10
+  end
+
+  def dead_response
+    "|STREAM OVER| Looks like we've got ourselves a dead meerkat. Mind cleaning up the mess?"
   end
 
   def on_startup
-    # Run every hour
-    scheduler.cron '0 * * * *' do
-      # See https://github.com/jmettraux/rufus-scheduler
-      # tweet("hi")
-      # pictweet("hi", "cuteselfie.jpg")
+    # Run every 30 min
+    scheduler.cron '0, 30 * * * *' do
+      twitter.search("'|LIVE NOW|' meerkat", result_type: 'recent').each do |tweet|
+        delay do
+          url = tweet.text.split(' ').last
+          if roadkill? url
+            reply(tweet, dead_response)
+          end
+        end
+      end
     end
   end
 end

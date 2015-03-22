@@ -7,6 +7,7 @@ GEM
       redis
     buftok (0.2.0)
     coderay (1.1.0)
+    dotenv (1.0.2)
     engtagger (0.2.0)
     equalizer (0.0.10)
     faraday (0.9.1)
@@ -75,6 +76,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  dotenv
   httparty
   nokogiri
   twitter_ebooks
