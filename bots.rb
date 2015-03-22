@@ -40,7 +40,7 @@ class MyBot < Ebooks::Bot
   end
 
   def dead_response
-    "|STREAM OVER| Looks like we've got ourselves a dead meerkat. Mind cleaning up the mess?"
+    "|STREAM OVER| Looks like we've found ourselves a dead meerkat. Mind cleaning up the mess?"
   end
 
   def reply_response
