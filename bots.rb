@@ -36,7 +36,7 @@ class MyBot < Ebooks::Bot
     self.consumer_secret = CONSUMER_SECRET
 
     self.blacklist = ['appmeerkat']
-    self.delay_range = 10..30
+    self.delay_range = 15..30
   end
 
   def dead_response
