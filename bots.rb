@@ -44,7 +44,7 @@ class MyBot < Ebooks::Bot
   end
 
   def reply_response
-    "This is an automated service by @prestonrichey. Feel free to get in contact."
+    "This is an automated service by @prestonrichey. Feel free to get in touch."
   end
 
   def on_startup
